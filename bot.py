@@ -1,9 +1,9 @@
 import os
+import asyncio
 from pyrogram import Client, filters
 from translation import Translation
 from database.database import df_thumb, del_thumb, thumb, init_db
 from config import Config
-import asyncio
 
 bot = Client(
     "thumb_bot",
@@ -12,8 +12,7 @@ bot = Client(
     bot_token=Config.BOT_TOKEN
 )
 
-async def start_bot():
-    await init_db()  # Initialize database before starting
+# ------------------- Commands -------------------
 
 @bot.on_message(filters.photo)
 async def save_photo(bot, update):
@@ -54,6 +53,15 @@ async def show_thumb(bot, update):
     else:
         await bot.send_message(update.chat.id, Translation.NO_THUMB_FOUND, reply_to_message_id=update.message_id)
 
+# ------------------- Main Runner -------------------
+
+async def main():
+    await init_db()    # Initialize database
+    await bot.start()  # Start bot
+    print("✅ Bot is running...")
+    await bot.idle()   # Keep bot alive
+
 if __name__ == "__main__":
-    asyncio.run(start_bot())  # Initialize DB
-    bot.run()                 # Start bot
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(main())
