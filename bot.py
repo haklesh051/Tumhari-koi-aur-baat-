@@ -12,12 +12,6 @@ bot = Client(
     bot_token=Config.BOT_TOKEN
 )
 
-# ---------- Bot startup ----------
-@bot.on_connect()
-async def startup(client):
-    await init_db()  # Database initialize on bot start
-    print("✅ Database initialized and bot connected!")
-
 # ---------- Commands ----------
 @bot.on_message(filters.photo)
 async def save_photo(bot, update):
@@ -60,4 +54,8 @@ async def show_thumb(bot, update):
 
 # ---------- Run bot synchronously ----------
 if __name__ == "__main__":
+    # Initialize database before starting bot
+    import asyncio
+    asyncio.run(init_db())
+    
     bot.run()
