@@ -1,9 +1,9 @@
 import os
+import asyncio
 from pyrogram import Client, filters
 from translation import Translation
 from database.database import df_thumb, del_thumb, thumb, init_db
 from config import Config
-import asyncio
 
 bot = Client(
     "thumb_bot",
@@ -40,7 +40,7 @@ async def show_thumb(bot, update):
     thumb_image_path = f"{Config.DOWNLOAD_LOCATION}/{update.from_user.id}.jpg"
     if not os.path.exists(thumb_image_path):
         mes = await thumb(update.from_user.id)
-        if mes != None:
+        if mes is not None:
             m = await bot.get_messages(update.chat.id, mes.msg_id)
             await m.download(file_name=thumb_image_path)
         else:
@@ -52,10 +52,12 @@ async def show_thumb(bot, update):
     else:
         await bot.send_message(update.chat.id, Translation.NO_THUMB_FOUND, reply_to_message_id=update.message_id)
 
-# ---------- Run bot synchronously ----------
+# ---------- Main runner ----------
+async def main():
+    await init_db()    # Initialize database
+    await bot.start()  # Start bot
+    print("✅ Bot is running...")
+    await bot.idle()   # Keep bot alive
+
 if __name__ == "__main__":
-    # Initialize database before starting bot
-    import asyncio
-    asyncio.run(init_db())
-    
-    bot.run()
+    asyncio.run(main())
