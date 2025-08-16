@@ -1,9 +1,9 @@
 import os
-import asyncio
 from pyrogram import Client, filters
 from translation import Translation
 from database.database import df_thumb, del_thumb, thumb, init_db
 from config import Config
+import asyncio
 
 bot = Client(
     "thumb_bot",
@@ -12,8 +12,13 @@ bot = Client(
     bot_token=Config.BOT_TOKEN
 )
 
-# ------------------- Commands -------------------
+# ---------- Bot startup ----------
+@bot.on_connect()
+async def startup(client):
+    await init_db()  # Database initialize on bot start
+    print("✅ Database initialized and bot connected!")
 
+# ---------- Commands ----------
 @bot.on_message(filters.photo)
 async def save_photo(bot, update):
     if update.from_user.id in Config.BANNED_USERS:
@@ -53,15 +58,6 @@ async def show_thumb(bot, update):
     else:
         await bot.send_message(update.chat.id, Translation.NO_THUMB_FOUND, reply_to_message_id=update.message_id)
 
-# ------------------- Main Runner -------------------
-
-async def main():
-    await init_db()    # Initialize database
-    await bot.start()  # Start bot
-    print("✅ Bot is running...")
-    await bot.idle()   # Keep bot alive
-
+# ---------- Run bot synchronously ----------
 if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(main())
+    bot.run()
