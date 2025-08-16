@@ -1,22 +1,13 @@
-import os
 from pyrogram import Client
+from config import Config
 
-# Render ke environment variables se values lena
-API_ID = int(os.environ.get("API_ID"))
-API_HASH = os.environ.get("API_HASH")
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-
-# Pyrogram Client
 bot = Client(
     "my_bot",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN
+    api_id=Config.API_ID,
+    api_hash=Config.API_HASH,
+    bot_token=Config.BOT_TOKEN,
+    plugins=dict(root="plugins")  # 👈 sab plugins load karega
 )
 
-@bot.on_message()
-async def start_handler(client, message):
-    await message.reply_text("✅ Bot chal raha hai!")
-
-if __name__ == "__main__":
-    bot.run()
+print("✅ Bot started...")
+bot.run()
