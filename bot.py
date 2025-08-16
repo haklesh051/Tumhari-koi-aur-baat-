@@ -3,9 +3,7 @@ from pyrogram import Client, filters
 from translation import Translation
 from database.database import df_thumb, del_thumb, thumb, init_db
 from config import Config
-
-async def main():
-    await init_db()  # Initialize database
+import asyncio
 
 bot = Client(
     "thumb_bot",
@@ -13,6 +11,9 @@ bot = Client(
     api_hash=Config.API_HASH,
     bot_token=Config.BOT_TOKEN
 )
+
+async def start_bot():
+    await init_db()  # Initialize database before starting
 
 @bot.on_message(filters.photo)
 async def save_photo(bot, update):
@@ -53,4 +54,6 @@ async def show_thumb(bot, update):
     else:
         await bot.send_message(update.chat.id, Translation.NO_THUMB_FOUND, reply_to_message_id=update.message_id)
 
-bot.run(main())
+if __name__ == "__main__":
+    asyncio.run(start_bot())  # Initialize DB
+    bot.run()                 # Start bot
