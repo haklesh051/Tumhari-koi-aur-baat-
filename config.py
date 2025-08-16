@@ -1,12 +1,10 @@
 import os
 
 class Config:
-    API_ID = 123456            # Apna API ID yahan
-    API_HASH = "your_api_hash" # Apna API HASH yahan
-    BOT_TOKEN = "your_bot_token_here"
-    DOWNLOAD_LOCATION = os.path.join(os.getcwd(), "downloads")
-    BANNED_USERS = []          # Agar koi banned user hai, id list me dalen
+    API_ID = int(os.environ.get("API_ID", 0))
+    API_HASH = os.environ.get("API_HASH", "")
+    BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
-# Ensure download folder exists
-if not os.path.exists(Config.DOWNLOAD_LOCATION):
-    os.makedirs(Config.DOWNLOAD_LOCATION)
+    # Extra Config
+    BANNED_USERS = []  # Agar aapko kuch IDs block karni hain to yaha list me dal do
+    DOWNLOAD_LOCATION = "./downloads"  # Thumbnails save karne ka folder
